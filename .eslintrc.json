@@ -25,6 +25,7 @@
     "import/extensions": "off",
     "react/button-has-type": "off",
     "react/react-in-jsx-scope": "off",
+    "react/require-default-props": "off",
     "react/jsx-props-no-spreading": "off",
     "react/jsx-filename-extension": "off",
     "react/function-component-definition": "off",
