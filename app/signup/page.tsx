@@ -1,12 +1,38 @@
 'use client'
 
 import Link from 'next/link'
+import { type FormEvent, useState } from 'react'
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
 
 import Input from '@/components/common/fields/Input'
 
 import routeLinks from '@/network/routeLinks'
+import '@/network/firebase'
 
 const Login = () => {
+  const auth = getAuth()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  const handleSignUp = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed up
+        const { user } = userCredential
+
+        console.log({ user })
+
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code
+        const errorMessage = error.message
+        console.log({ errorCode, errorMessage })
+        // ..
+      })
+  }
+
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0">
@@ -15,7 +41,11 @@ const Login = () => {
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               Sign up new account
             </h1>
-            <form className="space-y-4 md:space-y-6" action="#">
+            <form
+              method="POST"
+              onSubmit={handleSignUp}
+              className="space-y-4 md:space-y-6"
+            >
               <Input
                 isRequired
                 id="email"
@@ -23,7 +53,7 @@ const Login = () => {
                 type="email"
                 label="Email"
                 placeholder="Enter Your Email Address"
-                onChange={({ name }) => console.log(name)}
+                onChange={({ value }) => setEmail(value)}
               />
 
               <Input
@@ -33,7 +63,7 @@ const Login = () => {
                 type="password"
                 label="Password"
                 placeholder="Enter Your Password"
-                onChange={({ name }) => console.log(name)}
+                onChange={({ value }) => setPassword(value)}
               />
 
               <button
