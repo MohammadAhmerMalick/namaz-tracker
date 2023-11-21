@@ -1,36 +1,42 @@
 'use client'
 
 import Link from 'next/link'
+import { toast } from 'react-toastify'
 import { type FormEvent, useState } from 'react'
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
 
 import Input from '@/components/common/fields/Input'
 
-import routeLinks from '@/network/routeLinks'
 import '@/network/firebase'
+import routeLinks from '@/network/routeLinks'
+
+import { parseFirebaseError } from '@/utils/functions'
 
 const Login = () => {
   const auth = getAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleSignUp = (e: FormEvent<HTMLFormElement>) => {
+  // Sigup form submission
+  const handleSignUp = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed up
-        const { user } = userCredential
 
-        console.log({ user })
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      )
 
-        // ...
-      })
-      .catch((error) => {
-        const errorCode = error.code
-        const errorMessage = error.message
-        console.log({ errorCode, errorMessage })
-        // ..
-      })
+      const { user } = userCredential
+      console.log({ user })
+    } catch (error) {
+      const errorCode = error.code
+      const errorMessage = error.message
+
+      toast.error(parseFirebaseError(errorCode))
+      console.log({ errorCode, errorMessage })
+    }
   }
 
   return (

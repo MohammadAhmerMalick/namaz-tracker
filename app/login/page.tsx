@@ -1,12 +1,44 @@
 'use client'
 
 import Link from 'next/link'
+import { toast } from 'react-toastify'
+import { type FormEvent, useState } from 'react'
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 
 import Input from '@/components/common/fields/Input'
 
+import '@/network/firebase'
 import routeLinks from '@/network/routeLinks'
 
+import { parseFirebaseError } from '@/utils/functions'
+
 const Login = () => {
+  const auth = getAuth()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  // login form submission
+  const handleSignIn = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      )
+
+      const { user } = userCredential
+      console.log({ user })
+    } catch (error: any) {
+      const errorCode = error.code
+      const errorMessage = error.message
+
+      toast.error(parseFirebaseError(errorCode))
+      console.log({ errorCode, errorMessage })
+    }
+  }
+
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen lg:py-0">
@@ -15,7 +47,11 @@ const Login = () => {
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               Sign in to your account
             </h1>
-            <form className="space-y-4 md:space-y-6" action="#">
+            <form
+              method="POST"
+              onSubmit={handleSignIn}
+              className="space-y-4 md:space-y-6"
+            >
               <Input
                 isRequired
                 id="email"
@@ -23,7 +59,7 @@ const Login = () => {
                 type="email"
                 label="Email"
                 placeholder="Enter Your Email Address"
-                onChange={({ name }) => console.log(name)}
+                onChange={({ value }) => setEmail(value)}
               />
 
               <Input
@@ -33,7 +69,7 @@ const Login = () => {
                 type="password"
                 label="Password"
                 placeholder="Enter Your Password"
-                onChange={({ name }) => console.log(name)}
+                onChange={({ value }) => setPassword(value)}
               />
 
               <div className="flex items-center justify-between">
@@ -47,7 +83,6 @@ const Login = () => {
                       aria-describedby="remember"
                       type="checkbox"
                       className="flex items-center h-5 w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                      required
                     />
                     Remember me
                   </label>
