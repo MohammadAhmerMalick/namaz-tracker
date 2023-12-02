@@ -1,4 +1,4 @@
-import { loginUser } from '@/model/AuthModal'
+import { loginUser } from './Controller'
 
 export const GET = async (request: Request) => {
   // const res = await request.json()
