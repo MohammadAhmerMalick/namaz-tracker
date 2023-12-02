@@ -10,11 +10,15 @@ initializeApp(firebaseConfig)
 export const loginUser = async (email: string, password: string) => {
   try {
     const auth = getAuth()
-    const { user } = await signInWithEmailAndPassword(auth, email, password)
+    const res = await signInWithEmailAndPassword(auth, email, password)
+    const { user } = res
 
     // on success
     return {
-      data: user,
+      data: {
+        email: user.email,
+        accessToken: await user.getIdToken(),
+      },
       status: 'success',
       message: 'logged in',
     }
@@ -25,7 +29,7 @@ export const loginUser = async (email: string, password: string) => {
     return {
       data: error,
       status: 'error',
-      message: parseFirebaseError(errorCode),
+      message: [parseFirebaseError(errorCode)],
     }
   }
 }

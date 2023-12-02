@@ -16,7 +16,7 @@ export const POST = async (request: Request) => {
       return Response.json({
         data: null,
         stattus: 'error',
-        message: 'Email and Password is required',
+        message: ['Email and Password are required'],
       })
 
     const { status, data, message } = await loginUser(email, password)
@@ -26,7 +26,7 @@ export const POST = async (request: Request) => {
       return Response.json({
         data,
         status: 'success',
-        message: 'Successfully logged in',
+        message: ['Successfully logged in'],
       })
     }
 
@@ -39,7 +39,7 @@ export const POST = async (request: Request) => {
     return Response.json({
       data: '',
       status: 'error',
-      message: 'something went wrong',
+      message: ['something went wrong'],
     })
   }
 

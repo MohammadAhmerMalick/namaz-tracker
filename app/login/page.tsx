@@ -2,42 +2,32 @@
 
 import Link from 'next/link'
 import { toast } from 'react-toastify'
-import { type FormEvent, useState } from 'react'
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import { type FormEvent, useState, useEffect } from 'react'
 
 import Input from '@/components/common/fields/Input'
+
+import { useAppDispatch, useAppSelector } from '@/store/store'
+import { loginAction } from '@/store/slices/authSlice/subSlice/authSubSlice'
 
 import '@/network/firebase'
 import routeLinks from '@/network/routeLinks'
 
-import { parseFirebaseError } from '@/utils/functions'
-
 const Login = () => {
-  const auth = getAuth()
+  const dispatch = useAppDispatch()
+  const { isLoading, errors } = useAppSelector((s) => s.authReducer.login)
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
   // login form submission
   const handleSignIn = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      )
-
-      const { user } = userCredential
-      console.log({ user })
-    } catch (error: any) {
-      const errorCode = error.code
-      const errorMessage = error.message
-
-      toast.error(parseFirebaseError(errorCode))
-      console.log({ errorCode, errorMessage })
-    }
+    dispatch(loginAction({ email, password }))
   }
+
+  useEffect(() => {
+    errors.forEach((error) => toast.error(error))
+  }, [errors])
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
@@ -58,6 +48,7 @@ const Login = () => {
                 name="email"
                 type="email"
                 label="Email"
+                isDisabled={isLoading}
                 placeholder="Enter Your Email Address"
                 onChange={({ value }) => setEmail(value)}
               />
@@ -68,6 +59,7 @@ const Login = () => {
                 name="password"
                 type="password"
                 label="Password"
+                isDisabled={isLoading}
                 placeholder="Enter Your Password"
                 onChange={({ value }) => setPassword(value)}
               />
@@ -96,6 +88,7 @@ const Login = () => {
               </div>
               <button
                 type="submit"
+                disabled={isLoading}
                 className="w-full text-white bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 Sign in
