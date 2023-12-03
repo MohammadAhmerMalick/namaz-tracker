@@ -1,20 +1,19 @@
 'use client'
 
 import Link from 'next/link'
-import { toast } from 'react-toastify'
-import { type FormEvent, useState, useEffect } from 'react'
+import { type FormEvent, useState } from 'react'
 
 import Input from '@/components/common/fields/Input'
 
 import { useAppDispatch, useAppSelector } from '@/store/store'
-import { loginAction } from '@/store/slices/authSlice/subSlice/authSubSlice'
+import { loginAction } from '@/store/slices/authSlice/subSlice/loginSubSlice'
 
 import '@/network/firebase'
 import routeLinks from '@/network/routeLinks'
 
 const Login = () => {
   const dispatch = useAppDispatch()
-  const { isLoading, errors } = useAppSelector((s) => s.authReducer.login)
+  const { isLoading } = useAppSelector((s) => s.authReducer.login)
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -24,10 +23,6 @@ const Login = () => {
     e.preventDefault()
     dispatch(loginAction({ email, password }))
   }
-
-  useEffect(() => {
-    errors.forEach((error) => toast.error(error))
-  }, [errors])
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">

@@ -1,9 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-import { loginReducer } from './subSlice/authSubSlice'
+import { loginReducer } from './subSlice/loginSubSlice'
+import { signupReducer } from './subSlice/signupSubSlice'
 
 export interface InitialState {
-  signup: null
+  signup: {
+    errors: string[]
+    isLoading: boolean
+  }
   login: {
     data: {
       email: string
@@ -15,7 +19,10 @@ export interface InitialState {
 }
 
 export const initialState: InitialState = {
-  signup: null,
+  signup: {
+    errors: [],
+    isLoading: false,
+  },
   login: {
     data: {
       email: '',
@@ -31,6 +38,7 @@ const auth = createSlice({
   initialState,
   reducers: {},
   extraReducers(builder) {
+    signupReducer(builder)
     loginReducer(builder)
   },
 })

@@ -3,6 +3,7 @@ import {
   type PayloadAction,
   type ActionReducerMapBuilder,
 } from '@reduxjs/toolkit'
+import { toast } from 'react-toastify'
 
 import callAPI from '@/network/functions'
 
@@ -18,6 +19,10 @@ export const loginAction = createAsyncThunk(
   async (payload: Payload, { rejectWithValue }) => {
     const res = await callAPI.post('./api/login', payload)
     if (res.status === 'success') return res.data
+    // this is handled error
+    if (res.status === 'error')
+      res.message.forEach((error) => toast.error(error))
+
     return rejectWithValue(res)
   }
 )

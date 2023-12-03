@@ -6,7 +6,7 @@ export const customAxios = axios.create({
 
 interface ResInterface {
   data: any
-  message: string
+  message: string[]
   status: 'error' | 'success'
 }
 
